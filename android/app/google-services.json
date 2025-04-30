@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1042667665262",
+    "project_id": "budget-3bdf3",
+    "storage_bucket": "budget-3bdf3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042667665262:android:25c60b4d2a1706d5a5337f",
+        "android_client_info": {
+          "package_name": "com.example.budget"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi9MOufRh1QLbz2KErLMttzhxBvqTbSQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042667665262:android:46401547ff28357ca5337f",
+        "android_client_info": {
+          "package_name": "com.example.chatbud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi9MOufRh1QLbz2KErLMttzhxBvqTbSQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

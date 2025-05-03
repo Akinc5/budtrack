@@ -12,20 +12,21 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen> {
   final FirestoreService _firestoreService = FirestoreService();
+  final String userId = 'demoUser';
   String _selectedMonth = DateHelpers.getCurrentMonthYear();
   late Future<Map<String, dynamic>> _summaryFuture;
 
   @override
   void initState() {
     super.initState();
-    _summaryFuture = _firestoreService.getMonthlySummary(_selectedMonth);
+    _summaryFuture = _firestoreService.getMonthlySummary(_selectedMonth, userId);
   }
 
   void _onMonthChanged(String? newValue) {
     if (newValue != null) {
       setState(() {
         _selectedMonth = newValue;
-        _summaryFuture = _firestoreService.getMonthlySummary(_selectedMonth);
+        _summaryFuture = _firestoreService.getMonthlySummary(_selectedMonth, userId);
       });
     }
   }

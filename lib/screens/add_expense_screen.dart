@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/date_helpers.dart';
 import '../services/firestore_service.dart';
 
@@ -21,7 +20,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   bool _isLoading = false;
 
   final FirestoreService _firestoreService = FirestoreService();
-  final String userId = 'demoUser'; // Replace with actual user ID from auth
+  final String userId = 'demoUser'; // Replace with actual auth userId
 
   @override
   void initState() {
@@ -42,6 +41,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     await _firestoreService.addCategory(name, userId);
     _newCategoryController.clear();
     await _loadCategories();
+    setState(() {
+      _selectedCategory = name;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Category added!')),
     );
@@ -55,13 +57,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       setState(() => _isLoading = true);
 
       try {
-        await FirebaseFirestore.instance.collection('expenses').add({
+        await _firestoreService.addExpense({
           'description': description,
           'amount': amount,
-          'category': _selectedCategory,
-          'timestamp': FieldValue.serverTimestamp(),
+          'category': _selectedCategory ?? 'Uncategorized',
           'month': DateHelpers.getCurrentMonthYear(),
-        });
+        }, userId);
 
         _descriptionController.clear();
         _amountController.clear();

@@ -14,7 +14,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-
+  final String userId = 'demoUser';
   String _selectedMonth = DateHelpers.getCurrentMonthYear();
   bool _isLoading = false;
 
@@ -39,6 +39,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
           'amount': amount,
           'timestamp': FieldValue.serverTimestamp(),
           'month': _selectedMonth,
+          'userId': userId,
         });
 
         _descriptionController.clear();

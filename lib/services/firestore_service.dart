@@ -3,8 +3,56 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  /// Fetches income, expense, and category breakdown for a given month.
-  Future<Map<String, dynamic>> getMonthlySummary(String monthYear) async {
+  /// Adds an income record
+  Future<void> addIncome(Map<String, dynamic> data, String userId) async {
+    await _db.collection('income').add({
+      ...data,
+      'userId': userId,
+      'createdAt': Timestamp.now(),
+    });
+  }
+
+  /// Adds an expense record
+  Future<void> addExpense(Map<String, dynamic> data, String userId) async {
+    await _db.collection('expenses').add({
+      ...data,
+      'userId': userId,
+      'createdAt': Timestamp.now(),
+    });
+  }
+
+  /// Adds a new category for the user
+  Future<void> addCategory(String categoryName, String userId) async {
+    await _db.collection('categories').add({
+      'name': categoryName,
+      'userId': userId,
+      'createdAt': Timestamp.now(),
+    });
+  }
+
+  /// Fetches the list of user categories
+  Future<List<String>> getUserCategories(String userId) async {
+    final snapshot = await _db
+        .collection('categories')
+        .where('userId', isEqualTo: userId)
+        .get();
+
+    return snapshot.docs.map((doc) => doc['name'] as String).toList();
+  }
+
+  /// Initializes default categories for new users
+  Future<void> initializeDefaultCategories(String userId) async {
+    final currentCategories = await getUserCategories(userId);
+    if (currentCategories.isNotEmpty) return;
+
+    const defaultCategories = ['Food', 'Transport', 'Utilities', 'Shopping', 'Others'];
+    for (final category in defaultCategories) {
+      await addCategory(category, userId);
+    }
+  }
+
+  /// Fetches monthly summary: income, expense, and category breakdown
+  Future<Map<String, dynamic>> getMonthlySummary(String monthYear, String userId) async {
     double incomeTotal = 0;
     double expenseTotal = 0;
     Map<String, double> categoryBreakdown = {};
@@ -13,17 +61,19 @@ class FirestoreService {
     final incomeSnapshot = await _db
         .collection('income')
         .where('month', isEqualTo: monthYear)
+        .where('userId', isEqualTo: userId)
         .get();
 
     for (var doc in incomeSnapshot.docs) {
-      final amount = (doc.data()['amount'] ?? 0).toDouble();
-      incomeTotal += amount;
+      final data = doc.data();
+      incomeTotal += (data['amount'] ?? 0).toDouble();
     }
 
     // Fetch expenses
     final expenseSnapshot = await _db
         .collection('expenses')
         .where('month', isEqualTo: monthYear)
+        .where('userId', isEqualTo: userId)
         .get();
 
     for (var doc in expenseSnapshot.docs) {
@@ -32,8 +82,7 @@ class FirestoreService {
       final category = data['category'] ?? 'Other';
 
       expenseTotal += amount;
-      categoryBreakdown[category] =
-          (categoryBreakdown[category] ?? 0) + amount;
+      categoryBreakdown[category] = (categoryBreakdown[category] ?? 0) + amount;
     }
 
     return {
@@ -43,68 +92,17 @@ class FirestoreService {
     };
   }
 
-  /// Adds a custom expense category for the current user.
-  Future<void> addCategory(String name, String userId) async {
-    await _db.collection('categories').add({
-      'name': name.trim(),
-      'userId': userId,
-      'createdAt': Timestamp.now(),
-    });
-  }
+  /// Saves or updates user info by phone number
+  Future<void> saveUser(String phoneNumber) async {
+    final userDoc = _db.collection('users').doc(phoneNumber);
 
-  /// Retrieves all custom categories for a user.
-  Future<List<String>> getUserCategories(String userId) async {
-    final snapshot = await _db
-        .collection('categories')
-        .where('userId', isEqualTo: userId)
-        .get();
-
-    return snapshot.docs
-        .map((doc) => doc.data()['name']?.toString() ?? '')
-        .where((name) => name.isNotEmpty)
-        .toList();
-  }
-
-  /// Deletes a user-created category by its Firestore document ID.
-  Future<void> deleteCategory(String categoryId) async {
-    await _db.collection('categories').doc(categoryId).delete();
-  }
-
-  /// (Optional) Initialize predefined categories for a user if none exist
-  Future<void> initializeDefaultCategories(String userId) async {
-    final snapshot = await _db
-        .collection('categories')
-        .where('userId', isEqualTo: userId)
-        .get();
-
-    if (snapshot.docs.isEmpty) {
-      const defaultCategories = [
-        'Groceries',
-        'Bills',
-        'Entertainment',
-        'Transport',
-        'Health',
-        'Education',
-        'Rent',
-        'Subscriptions',
-        'Dining Out',
-        'Shopping',
-        'Travel',
-        'Others',
-      ];
-
-      final batch = _db.batch();
-
-      for (var name in defaultCategories) {
-        final docRef = _db.collection('categories').doc();
-        batch.set(docRef, {
-          'name': name,
-          'userId': userId,
-          'createdAt': Timestamp.now(),
-        });
-      }
-
-      await batch.commit();
+    final doc = await userDoc.get();
+    if (!doc.exists) {
+      await userDoc.set({
+        'phoneNumber': phoneNumber,
+        'createdAt': Timestamp.now(),
+      });
+      print('User saved with phone number: $phoneNumber');
     }
   }
 }

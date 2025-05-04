@@ -1,16 +1,13 @@
-# chatbud
+Budget Tracker App
+A simple and efficient budget tracker application built using Flutter and Firebase to help you manage your income and expenditures. The app allows you to input their financial transactions and displays key statistics to visualize their spending patterns.
+You can download it at :- https://github.com/Akinc5/budtrack/releases/download/v2.0.0/app-release.apk
 
-A new Flutter project.
+Features
+Add Income/Expenditure: Track your income and expenditures easily with simple input forms.
+Statistics Display: Visualize your finances with helpful chart to see where your money is going.
+Firebase Integration: Data is stored and synchronized in real-time using Firebase, ensuring your financial records are always up to date.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Technologies Used
+Flutter
+Firebase
+Dart

@@ -20,7 +20,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   bool _isLoading = false;
 
   final FirestoreService _firestoreService = FirestoreService();
-  final String userId = 'demoUser'; // Replace with actual auth userId
+  final String userId = 'demoUser'; 
 
   @override
   void initState() {
